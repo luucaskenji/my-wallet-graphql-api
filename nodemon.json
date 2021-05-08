@@ -2,5 +2,5 @@
   "watch": ["src"],
   "ext": "ts",
   "ignore": ["__tests__/**.**"],
-  "exec": "NODE_ENV=development ts-node ./src/index.ts"
+  "exec": "ts-node ./src/index.ts"
 }

@@ -7,10 +7,11 @@
   "license": "MIT",
   "scripts": {
     "dev": "nodemon",
-    "typeorm": "yarn ts-node ./node_modules/typeorm/cli.js --config src/ormconfig.ts"
+    "typeorm": "yarn ts-node ./node_modules/typeorm/cli.js --config src/database/ormconfig.ts"
   },
   "dependencies": {
     "apollo-server-express": "^2.24.0",
+    "cors": "^2.8.5",
     "dotenv": "^9.0.0",
     "express": "^4.17.1",
     "graphql-import": "^1.0.2",
