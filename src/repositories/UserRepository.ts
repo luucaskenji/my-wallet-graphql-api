@@ -1,9 +1,7 @@
-import { EntityRepository, EntityManager } from 'typeorm';
+import { EntityRepository, Repository } from 'typeorm';
 import { User } from '../models';
 
 @EntityRepository(User)
-class UserRepository {
-  constructor(private manager: EntityManager) {}
-}
+class UserRepository extends Repository<User> { }
 
 export default UserRepository;

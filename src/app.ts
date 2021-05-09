@@ -6,6 +6,7 @@ import { importSchema } from 'graphql-import';
 import 'reflect-metadata';
 
 import connectToDB from './database';
+import resolvers from './resolvers';
 
 dotenv.config();
 
@@ -14,6 +15,7 @@ app.use(cors());
 
 const server = new ApolloServer({
   typeDefs: importSchema('./src/schema/schema.graphql'),
+  resolvers,
 });
 
 server.applyMiddleware({ app });
