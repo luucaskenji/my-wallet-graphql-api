@@ -1,5 +1,7 @@
 /* eslint-disable no-unused-vars */
 import {
+  BeforeInsert,
+  BeforeUpdate,
   Column,
   CreateDateColumn,
   Entity,
@@ -38,6 +40,17 @@ class User {
 
   @UpdateDateColumn()
   updatedAt: Date;
+
+  @BeforeInsert()
+  private setCreationDate(): void {
+    this.createdAt = new Date();
+  }
+
+  @BeforeInsert()
+  @BeforeUpdate()
+  private setUpdateDate(): void {
+    this.updatedAt = new Date();
+  }
 }
 
 export default User;
