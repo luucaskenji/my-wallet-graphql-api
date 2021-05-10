@@ -8,6 +8,7 @@ import {
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
+import bcrypt from 'bcrypt';
 
 @Entity({ name: 'users' })
 class User {
@@ -50,6 +51,11 @@ class User {
   @BeforeUpdate()
   private setUpdateDate(): void {
     this.updatedAt = new Date();
+  }
+
+  @BeforeInsert()
+  private hashPassword(): void {
+    this.password = bcrypt.hashSync(this.password, 10);
   }
 }
 
