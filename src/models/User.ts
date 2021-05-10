@@ -39,10 +39,10 @@ class User {
   @Column()
   password: string;
 
-  @CreateDateColumn()
+  @CreateDateColumn({ type: 'timestamp with time zone' })
   createdAt: Date;
 
-  @UpdateDateColumn()
+  @UpdateDateColumn({ type: 'timestamp with time zone' })
   updatedAt: Date;
 
   @OneToMany(() => Session, (session) => session.user)
