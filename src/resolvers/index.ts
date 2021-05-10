@@ -21,6 +21,19 @@ export default {
       if (!user) throw new Error('user not found');
 
       await getCustomRepository(UserRepository).verifyPassword(args.input.password, user.password);
+
+      let newSession = await getCustomRepository(SessionRepository).create();
+      newSession.user = user;
+
+      newSession = await getCustomRepository(SessionRepository).save(newSession);
+
+      const token = jwt.sign(
+        { id: newSession.id },
+        process.env.JWT_SECRET,
+        { expiresIn: '7d' },
+      );
+
+      return { user, token };
     },
   },
 };

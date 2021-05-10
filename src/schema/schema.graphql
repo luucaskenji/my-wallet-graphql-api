@@ -23,6 +23,7 @@ input UserInput {
 }
 
 type Session {
+  user: User!
   token: String!
 }
 
