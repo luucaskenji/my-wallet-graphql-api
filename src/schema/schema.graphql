@@ -18,4 +18,5 @@ input UserInput {
   lastName: String!
   email: String!
   password: String!
+  passwordConfirmation: String!
 }

@@ -3,4 +3,5 @@ export type createUserArgs = {
   lastName: string;
   email: string;
   password: string;
+  passwordConfirmation: string;
 }
