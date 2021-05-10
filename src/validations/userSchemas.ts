@@ -8,6 +8,12 @@ const signUp = joi.object({
   passwordConfirmation: joi.string().required().valid(joi.ref('password')),
 });
 
+const signIn = joi.object({
+  email: joi.string().email().required(),
+  password: joi.string().required(),
+});
+
 export default {
   signUp,
+  signIn,
 };
