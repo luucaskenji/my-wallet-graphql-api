@@ -1,6 +1,7 @@
 import { getCustomRepository } from 'typeorm';
+import jwt from 'jsonwebtoken';
 
-import { UserRepository } from '../repositories';
+import { SessionRepository, UserRepository } from '../repositories';
 import { createSessionArgs, createUserArgs } from '../types/resolvers';
 import userValidations from '../validations/userSchemas';
 
@@ -16,8 +17,10 @@ export default {
       const { error } = userValidations.signIn.validate(args.input);
       if (error) throw new Error(error.message);
 
-      const isValidPassword = await getCustomRepository(UserRepository).verifyPassword(args.input);
-      if (!isValidPassword) throw new Error('invalid password');
+      const user = await getCustomRepository(UserRepository).findOne({ email: args.input.email });
+      if (!user) throw new Error('user not found');
+
+      await getCustomRepository(UserRepository).verifyPassword(args.input.password, user.password);
     },
   },
 };
