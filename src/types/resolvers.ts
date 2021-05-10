@@ -5,3 +5,8 @@ export type createUserArgs = {
   password: string;
   passwordConfirmation: string;
 }
+
+export type createSessionArgs = {
+  email: string;
+  password: string;
+}
