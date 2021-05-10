@@ -5,10 +5,13 @@ import {
   Column,
   CreateDateColumn,
   Entity,
+  OneToMany,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
 import bcrypt from 'bcrypt';
+
+import Session from './Session';
 
 @Entity({ name: 'users' })
 class User {
@@ -41,6 +44,9 @@ class User {
 
   @UpdateDateColumn()
   updatedAt: Date;
+
+  @OneToMany(() => Session, (session) => session.user)
+  session: Session[];
 
   @BeforeInsert()
   private setCreationDate(): void {
