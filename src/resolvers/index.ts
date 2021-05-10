@@ -15,6 +15,8 @@ export default {
     createSession(_: any, args: { input: createSessionArgs }) {
       const { error } = userValidations.signIn.validate(args.input);
       if (error) throw new Error(error.message);
+
+      return getCustomRepository(UserRepository).verifyPassword(args.input);
     },
   },
 };
