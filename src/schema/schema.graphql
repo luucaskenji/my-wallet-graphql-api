@@ -4,6 +4,7 @@ type Query {
 
 type Mutation {
   createUser(input: UserInput): User!
+  createSession(input: SignInInput): Session!
 }
 
 type User {
@@ -19,4 +20,13 @@ input UserInput {
   email: String!
   password: String!
   passwordConfirmation: String!
+}
+
+type Session {
+  token: String!
+}
+
+input SignInInput {
+  email: String!
+  password: String!
 }
