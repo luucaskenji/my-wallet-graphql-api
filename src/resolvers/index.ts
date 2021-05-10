@@ -12,11 +12,12 @@ export default {
 
       return getCustomRepository(UserRepository).saveIfNotExists(args.input);
     },
-    createSession(_: any, args: { input: createSessionArgs }) {
+    async createSession(_: any, args: { input: createSessionArgs }) {
       const { error } = userValidations.signIn.validate(args.input);
       if (error) throw new Error(error.message);
 
-      return getCustomRepository(UserRepository).verifyPassword(args.input);
+      const isValidPassword = await getCustomRepository(UserRepository).verifyPassword(args.input);
+      if (!isValidPassword) throw new Error('invalid password');
     },
   },
 };

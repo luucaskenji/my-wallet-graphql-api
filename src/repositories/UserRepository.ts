@@ -1,4 +1,6 @@
 import { EntityRepository, Repository } from 'typeorm';
+import bcrypt from 'bcrypt';
+
 import { User } from '../models';
 import { createSessionArgs, createUserArgs } from '../types/resolvers';
 
@@ -23,11 +25,13 @@ class UserRepository extends Repository<User> {
     return this.manager.save(User, newUser);
   }
 
-  async verifyPassword(signInData: createSessionArgs): Promise<void> {
+  async verifyPassword(signInData: createSessionArgs): Promise<boolean> {
     const { email, password } = signInData;
 
     const user = await this._findByEmail(email);
     if (!user) throw new Error('user not found');
+
+    return bcrypt.compareSync(password, user.password);
   }
 }
 
