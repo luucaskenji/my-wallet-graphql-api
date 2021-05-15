@@ -11,7 +11,8 @@
   },
   "env": {
     "es2021": true,
-    "node": true
+    "node": true,
+    "jest": true
   },
   "extends": [
     "airbnb-base"
@@ -26,10 +27,11 @@
   ],
   "rules": {
     "import/extensions": "off",
+    "import/prefer-default-export": "off",
+    "import/no-unresolved": "off",
     "no-useless-constructor": "off",
     "no-empty-function": "off",
-    "import/prefer-default-export": "off",
     "no-underscore-dangle": "off",
-    "class-methods-use-this": "off",
+    "class-methods-use-this": "off"
   }
 }
