@@ -19,6 +19,8 @@ jest.mock('typeorm', () => ({
 }));
 
 describe('resolvers', () => {
+  beforeEach(jest.clearAllMocks);
+
   describe('Mutations', () => {
     const { Mutation } = resolvers;
 
