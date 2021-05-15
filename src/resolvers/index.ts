@@ -20,7 +20,7 @@ export default {
       const user = await getCustomRepository(UserRepository).findOne({ email: args.input.email });
       if (!user) throw new Error('user not found');
 
-      await getCustomRepository(UserRepository).verifyPassword(args.input.password, user.password);
+      getCustomRepository(UserRepository).verifyPassword(args.input.password, user.password);
 
       let newSession = await getCustomRepository(SessionRepository).create();
       newSession.user = user;
