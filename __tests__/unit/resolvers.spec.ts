@@ -1,8 +1,10 @@
 import { getCustomRepository } from 'typeorm';
 import { mocked } from 'ts-jest/utils';
+import jwt from 'jsonwebtoken';
+import { UserInputError } from 'apollo-server-express';
+
 import resolvers from '@/resolvers';
 import { createSessionArgs, createUserArgs } from '@/types/resolvers';
-import jwt from 'jsonwebtoken';
 
 jest.mock('typeorm', () => ({
   getCustomRepository: jest.fn(),
@@ -46,7 +48,7 @@ describe('resolvers', () => {
       });
 
       describe('joi validation', () => {
-        it('throws error if some of the required fields are not sent', () => {
+        it('throws error if some required field is not sent', () => {
           const args: { input: createUserArgs} = { // email field is missing
             // @ts-ignore
             input: {
@@ -219,6 +221,32 @@ describe('resolvers', () => {
         mocked(getCustomRepository).mockReturnValueOnce(UserRepositoryMock);
 
         expect(async () => Mutation.createSession(null, args)).rejects.toThrow();
+      });
+
+      describe('joi validation', () => {
+        it('throws error if some required field is not sent', () => {
+          const args: { input: createSessionArgs } = { // password field is missing
+            // @ts-ignore
+            input: {
+              email: 'test@test.com',
+            },
+          };
+
+          expect(async () => Mutation.createSession(null, args)).rejects.toThrow(UserInputError);
+          expect(mocked(getCustomRepository)).not.toHaveBeenCalled();
+        });
+
+        it('throws error input email is not in email format', () => {
+          const args: { input: createSessionArgs } = {
+            input: {
+              email: 'test-test.com',
+              password: 'test123456',
+            },
+          };
+
+          expect(async () => Mutation.createSession(null, args)).rejects.toThrow(UserInputError);
+          expect(mocked(getCustomRepository)).not.toHaveBeenCalled();
+        });
       });
     });
   });
