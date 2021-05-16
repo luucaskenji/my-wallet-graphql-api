@@ -21,7 +21,4 @@ module.exports = {
   transform: {
     '^.+\\.tsx?$': 'ts-jest',
   },
-  setupFiles: [
-    '<rootDir>/.jest/typeormMocks.js',
-  ],
 };

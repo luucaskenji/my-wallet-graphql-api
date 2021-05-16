@@ -1,19 +1,23 @@
 import { getCustomRepository } from 'typeorm';
 import jwt from 'jsonwebtoken';
 
+import { User } from '@/models';
 import { SessionRepository, UserRepository } from '../repositories';
 import { createSessionArgs, createUserArgs } from '../types/resolvers';
 import userValidations from '../validations/userSchemas';
 
 export default {
   Mutation: {
-    createUser(_: any, args: { input: createUserArgs }) {
+    createUser(_: any, args: { input: createUserArgs }): Promise<User | void> {
       const { error } = userValidations.signUp.validate(args.input);
       if (error) throw new Error(error.message);
 
       return getCustomRepository(UserRepository).saveIfNotExists(args.input);
     },
-    async createSession(_: any, args: { input: createSessionArgs }) {
+    async createSession(
+      _: any,
+      args: { input: createSessionArgs },
+    ): Promise<{ user: User, token: string } | void> {
       const { error } = userValidations.signIn.validate(args.input);
       if (error) throw new Error(error.message);
 
