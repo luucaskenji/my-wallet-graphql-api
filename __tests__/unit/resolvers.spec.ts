@@ -57,7 +57,7 @@ describe('resolvers', () => {
             },
           };
 
-          expect(() => Mutation.createUser(null, args)).toThrow();
+          expect(async () => Mutation.createUser(null, args)).rejects.toThrow();
         });
 
         it('throws error if input firstName is empty', async () => {
@@ -71,7 +71,7 @@ describe('resolvers', () => {
             },
           };
 
-          expect(() => Mutation.createUser(null, args)).toThrow();
+          expect(async () => Mutation.createUser(null, args)).rejects.toThrow();
         });
 
         it('throws error if input firstName is longer than 15 characters', () => {
@@ -85,7 +85,7 @@ describe('resolvers', () => {
             },
           };
 
-          expect(() => Mutation.createUser(null, args)).toThrow();
+          expect(async () => Mutation.createUser(null, args)).rejects.toThrow();
         });
 
         it('throws error if input firstName is empty', async () => {
@@ -99,7 +99,7 @@ describe('resolvers', () => {
             },
           };
 
-          expect(() => Mutation.createUser(null, args)).toThrow();
+          expect(async () => Mutation.createUser(null, args)).rejects.toThrow();
         });
 
         it('throws error if input lastName is longer than 15 characters', async () => {
@@ -113,7 +113,7 @@ describe('resolvers', () => {
             },
           };
 
-          expect(() => Mutation.createUser(null, args)).toThrow();
+          expect(async () => Mutation.createUser(null, args)).rejects.toThrow();
         });
 
         it('throws error if input email is not in email format', () => {
@@ -127,7 +127,7 @@ describe('resolvers', () => {
             },
           };
 
-          expect(() => Mutation.createUser(null, args)).toThrow();
+          expect(async () => Mutation.createUser(null, args)).rejects.toThrow();
         });
 
         it('throws error if input password is shorter than 6 characters', () => {
@@ -141,7 +141,7 @@ describe('resolvers', () => {
             },
           };
 
-          expect(() => Mutation.createUser(null, args)).toThrow();
+          expect(async () => Mutation.createUser(null, args)).rejects.toThrow();
         });
 
         it('throws error if input password is longer than 15 characters', () => {
@@ -155,7 +155,7 @@ describe('resolvers', () => {
             },
           };
 
-          expect(() => Mutation.createUser(null, args)).toThrow();
+          expect(async () => Mutation.createUser(null, args)).rejects.toThrow();
         });
 
         it('throws error if input passwordConfirmation is not equal to password', () => {
@@ -169,7 +169,7 @@ describe('resolvers', () => {
             },
           };
 
-          expect(() => Mutation.createUser(null, args)).toThrow();
+          expect(async () => Mutation.createUser(null, args)).rejects.toThrow();
         });
       });
     });
@@ -205,6 +205,20 @@ describe('resolvers', () => {
           .toHaveBeenCalledWith(args.input.password, user.password);
         expect(SessionRepositoryMock.save).toHaveBeenCalledWith(newSession);
         expect(result).toMatchObject({ user, token });
+      });
+
+      it('throws error if sent user credentials does not exist on db', () => {
+        const args: { input: createSessionArgs} = {
+          input: {
+            email: 'test@test.com',
+            password: 'test123456',
+          },
+        };
+
+        const UserRepositoryMock = { findOne: jest.fn().mockReturnValue(null) };
+        mocked(getCustomRepository).mockReturnValueOnce(UserRepositoryMock);
+
+        expect(async () => Mutation.createSession(null, args)).rejects.toThrow();
       });
     });
   });
