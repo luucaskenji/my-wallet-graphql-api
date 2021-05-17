@@ -17,8 +17,8 @@ jest.mock('typeorm', () => ({
   BeforeUpdate: jest.fn(),
   ManyToOne: jest.fn(),
   OneToMany: jest.fn(),
-  Repository: class Mock { },
   EntityRepository: jest.fn(),
+  Repository: class Repository { },
 }));
 
 describe('resolvers', () => {
