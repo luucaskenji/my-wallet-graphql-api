@@ -7,7 +7,7 @@ import { NotFoundError } from '@/errors';
 import { User } from '@/models';
 import { SessionRepository, UserRepository } from '../repositories';
 import { createFinanceArgs, createSessionArgs, createUserArgs } from '../types/resolvers';
-import userValidations from '../validations/userSchemas';
+import { userValidations, financeValidations } from '../validations';
 
 export default {
   Mutation: {
@@ -43,7 +43,8 @@ export default {
       return { user, token };
     },
     async createFinance(_: any, args: { input: createFinanceArgs }): Promise<any> {
-      
+      const { error } = financeValidations.financeInfo.validate(args.input);
+      if (error) throw new UserInputError(error.message);
     },
   },
 };

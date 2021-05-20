@@ -19,7 +19,7 @@ export class CreateFinancesTable1621476164507 implements MigrationInterface {
         },
         {
           name: 'value',
-          type: 'double precision',
+          type: 'varchar',
         },
         {
           name: 'type',

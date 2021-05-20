@@ -12,7 +12,7 @@ export type createSessionArgs = {
 }
 
 export type createFinanceArgs = {
-  value: number;
-  type: 'Income' | 'Expense';
+  value: string;
+  type: 'INCOME' | 'EXPENSE';
   description?: string;
 }

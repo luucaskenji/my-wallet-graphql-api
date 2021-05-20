@@ -35,13 +35,13 @@ input SignInInput {
 
 type Finance {
   id: ID!
-  value: Float!
+  value: String!
   description: String
   type: FinanceType!
 }
 
 input FinanceInput {
-  value: Float!
+  value: String!
   description: String
   type: FinanceType!
 }
