@@ -6,7 +6,7 @@ import { NotFoundError } from '@/errors';
 
 import { User } from '@/models';
 import { SessionRepository, UserRepository } from '../repositories';
-import { createSessionArgs, createUserArgs } from '../types/resolvers';
+import { createFinanceArgs, createSessionArgs, createUserArgs } from '../types/resolvers';
 import userValidations from '../validations/userSchemas';
 
 export default {
@@ -41,6 +41,9 @@ export default {
       );
 
       return { user, token };
+    },
+    async createFinance(_: any, args: { input: createFinanceArgs }): Promise<any> {
+      
     },
   },
 };
