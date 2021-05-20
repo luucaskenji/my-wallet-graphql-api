@@ -5,6 +5,7 @@ type Query {
 type Mutation {
   createUser(input: UserInput): User!
   createSession(input: SignInInput): Session!
+  createFinance(input: FinanceInput): Finance!
 }
 
 type User {
@@ -30,4 +31,22 @@ type Session {
 input SignInInput {
   email: String!
   password: String!
+}
+
+type Finance {
+  id: ID!
+  value: Float!
+  description: String
+  type: FinanceType!
+}
+
+input FinanceInput {
+  value: Float!
+  description: String
+  type: FinanceType!
+}
+
+enum FinanceType {
+  INCOME
+  EXPENSE
 }
