@@ -69,7 +69,7 @@ export default {
       _: any,
       args: { input: createFinanceArgs },
       context: ExpressContext,
-    ): Promise<Finance> { // to do: cast promise return
+    ): Promise<Finance> {
       const user = await checkAuthAndReturnUser(context);
 
       const { error } = financeValidations.financeInfo.validate(args.input);
