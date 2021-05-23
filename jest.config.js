@@ -14,6 +14,9 @@ module.exports = {
     '<rootDir>/types/*',
     '<rootDir>/validations/*',
   ],
+  testPathIgnorePatterns: [
+    '<rootDir>/__tests__/unit/mockedEntities.ts',
+  ],
   moduleFileExtensions: ['ts', 'tsx', 'js', 'jsx', 'json', 'node'],
   moduleNameMapper: {
     '^@/(.*)$': '<rootDir>/src/$1',

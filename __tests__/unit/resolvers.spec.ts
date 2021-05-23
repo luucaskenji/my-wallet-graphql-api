@@ -4,7 +4,10 @@ import jwt from 'jsonwebtoken';
 import { UserInputError } from 'apollo-server-express';
 
 import resolvers from '@/resolvers';
-import { createSessionArgs, createUserArgs } from '@/types/resolvers';
+import { createFinanceArgs, createSessionArgs, createUserArgs } from '@/types/resolvers';
+import * as AuthHelper from '@/helpers/authHelper';
+import { Finance } from '@/models';
+import { defaultUserModel } from './mockedEntities';
 
 jest.mock('typeorm', () => ({
   getCustomRepository: jest.fn(),
@@ -247,6 +250,32 @@ describe('resolvers', () => {
           expect(async () => Mutation.createSession(null, args)).rejects.toThrow(UserInputError);
           expect(mocked(getCustomRepository)).not.toHaveBeenCalled();
         });
+      });
+    });
+
+    describe('createFinance', () => {
+      it('returns created finance', async () => {
+        const value = '12,34';
+        const type = 'INCOME';
+        const description = 'Test';
+
+        const args: { input: createFinanceArgs } = {
+          input: {
+            value,
+            type,
+            description,
+          },
+        };
+
+        const expected = new Finance(value, type, defaultUserModel, description);
+        const FinanceRepositoryMock = { save: jest.fn(() => expected) };
+
+        jest.spyOn(AuthHelper, 'checkAuthAndReturnUser').mockResolvedValueOnce(defaultUserModel);
+        mocked(getCustomRepository).mockReturnValueOnce(FinanceRepositoryMock);
+
+        const result = await Mutation.createFinance(null, args, null);
+
+        expect(result).toEqual(expected);
       });
     });
   });

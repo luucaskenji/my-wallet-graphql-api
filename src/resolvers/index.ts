@@ -2,35 +2,16 @@ import { getCustomRepository } from 'typeorm';
 import jwt from 'jsonwebtoken';
 
 import {
-  ApolloError, AuthenticationError, ExpressContext, UserInputError,
+  ApolloError,
+  ExpressContext,
+  UserInputError,
 } from 'apollo-server-express';
 
 import { Finance, User } from '@/models';
+import { checkAuthAndReturnUser } from '@/helpers/authHelper';
 import { FinanceRepository, SessionRepository, UserRepository } from '../repositories';
 import { createFinanceArgs, createSessionArgs, createUserArgs } from '../types/resolvers';
 import { userValidations, financeValidations } from '../validations';
-
-const checkAuthAndReturnUser = async (ctx: ExpressContext): Promise<User> => {
-  const { req: { headers: { authorization } } } = ctx;
-
-  if (!authorization) throw new AuthenticationError('invalid request headers');
-
-  const requestToken = authorization.split(' ')[1];
-  if (!authorization || !requestToken) throw new AuthenticationError('invalid request headers');
-
-  let sessionId: number;
-  jwt.verify(requestToken, process.env.JWT_SECRET, (err, decoded: { id: number }) => {
-    if (err) throw new AuthenticationError('invalid token');
-
-    sessionId = decoded.id;
-  });
-
-  const session = await getCustomRepository(SessionRepository).findOne(sessionId, {
-    loadRelationIds: true,
-  });
-
-  return session.user;
-};
 
 export default {
   Mutation: {
@@ -70,10 +51,10 @@ export default {
       args: { input: createFinanceArgs },
       context: ExpressContext,
     ): Promise<Finance> {
-      const user = await checkAuthAndReturnUser(context);
-
       const { error } = financeValidations.financeInfo.validate(args.input);
       if (error) throw new UserInputError(error.message);
+
+      const user = await checkAuthAndReturnUser(context);
 
       const { input: { value, type, description } } = args;
       const newFinance = new Finance(value, type, user, description);
