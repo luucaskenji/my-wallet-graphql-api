@@ -4,7 +4,7 @@ import jwt from 'jsonwebtoken';
 import { AuthenticationError, ExpressContext, UserInputError } from 'apollo-server-express';
 import { NotFoundError } from '@/errors';
 
-import { User } from '@/models';
+import { Finance, User } from '@/models';
 import { SessionRepository, UserRepository } from '../repositories';
 import { createFinanceArgs, createSessionArgs, createUserArgs } from '../types/resolvers';
 import { userValidations, financeValidations } from '../validations';
