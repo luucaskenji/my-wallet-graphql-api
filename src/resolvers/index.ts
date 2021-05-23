@@ -9,6 +9,8 @@ import { SessionRepository, UserRepository } from '../repositories';
 import { createFinanceArgs, createSessionArgs, createUserArgs } from '../types/resolvers';
 import { userValidations, financeValidations } from '../validations';
 
+const checkAuth = () => {};
+
 export default {
   Mutation: {
     createUser(_: any, args: { input: createUserArgs }): Promise<User | void> {
@@ -42,7 +44,11 @@ export default {
 
       return { user, token };
     },
-    async createFinance(_: any, args: { input: createFinanceArgs }): Promise<any> {
+    async createFinance(
+      _: any,
+      args: { input: createFinanceArgs },
+      context,
+    ): Promise<any> { // to do: cast promise return
       const { error } = financeValidations.financeInfo.validate(args.input);
       if (error) throw new UserInputError(error.message);
     },

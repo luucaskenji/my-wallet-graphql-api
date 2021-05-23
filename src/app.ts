@@ -15,6 +15,7 @@ app.use(cors());
 
 const server = new ApolloServer({
   typeDefs: importSchema('./src/schema/schema.graphql'),
+  context: ({ req }) => req,
   resolvers,
 });
 
