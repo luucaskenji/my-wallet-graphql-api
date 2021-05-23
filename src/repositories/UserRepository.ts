@@ -1,8 +1,7 @@
 import { EntityRepository, Repository } from 'typeorm';
 import bcrypt from 'bcrypt';
 
-import { UserInputError } from 'apollo-server-express';
-import { ConflictError } from '@/errors';
+import { ApolloError, UserInputError } from 'apollo-server-express';
 
 import { User } from '../models';
 import { createUserArgs } from '../types/resolvers';
@@ -22,7 +21,7 @@ class UserRepository extends Repository<User> {
     } = userData;
 
     const user = await this._findByEmail(email);
-    if (user) throw new ConflictError('user already exists');
+    if (user) throw new ApolloError('user already exists');
 
     const newUser = new User(firstName, lastName, email, password);
     return this.manager.save(User, newUser);

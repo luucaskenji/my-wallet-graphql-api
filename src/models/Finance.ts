@@ -11,10 +11,11 @@ import User from './User';
 
 @Entity({ name: 'finances' })
 class Finance {
-  constructor(value: string, type: string, description?: string) {
+  constructor(value: string, type: string, user: User, description?: string) {
     this.value = value;
     this.type = type;
     this.description = description || null;
+    this.user = user;
   }
 
   @PrimaryGeneratedColumn()

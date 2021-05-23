@@ -1,15 +1,16 @@
 import { getCustomRepository } from 'typeorm';
 import jwt from 'jsonwebtoken';
 
-import { AuthenticationError, ExpressContext, UserInputError } from 'apollo-server-express';
-import { NotFoundError } from '@/errors';
+import {
+  ApolloError, AuthenticationError, ExpressContext, UserInputError,
+} from 'apollo-server-express';
 
 import { Finance, User } from '@/models';
-import { SessionRepository, UserRepository } from '../repositories';
+import { FinanceRepository, SessionRepository, UserRepository } from '../repositories';
 import { createFinanceArgs, createSessionArgs, createUserArgs } from '../types/resolvers';
 import { userValidations, financeValidations } from '../validations';
 
-const checkAuth = (ctx: ExpressContext): void => {
+const checkAuthAndReturnUser = async (ctx: ExpressContext): Promise<User> => {
   const { req: { headers: { authorization } } } = ctx;
 
   if (!authorization) throw new AuthenticationError('invalid request headers');
@@ -17,9 +18,18 @@ const checkAuth = (ctx: ExpressContext): void => {
   const requestToken = authorization.split(' ')[1];
   if (!authorization || !requestToken) throw new AuthenticationError('invalid request headers');
 
-  jwt.verify(requestToken, process.env.JWT_SECRET, (err) => {
+  let sessionId: number;
+  jwt.verify(requestToken, process.env.JWT_SECRET, (err, decoded: { id: number }) => {
     if (err) throw new AuthenticationError('invalid token');
+
+    sessionId = decoded.id;
   });
+
+  const session = await getCustomRepository(SessionRepository).findOne(sessionId, {
+    loadRelationIds: true,
+  });
+
+  return session.user;
 };
 
 export default {
@@ -38,7 +48,7 @@ export default {
       if (error) throw new UserInputError(error.message);
 
       const user = await getCustomRepository(UserRepository).findOne({ email: args.input.email });
-      if (!user) throw new NotFoundError('user not found');
+      if (!user) throw new ApolloError('user not found');
 
       getCustomRepository(UserRepository).verifyPassword(args.input.password, user.password);
 
@@ -60,10 +70,15 @@ export default {
       args: { input: createFinanceArgs },
       context: ExpressContext,
     ): Promise<any> { // to do: cast promise return
-      checkAuth(context);
+      const user = await checkAuthAndReturnUser(context);
 
       const { error } = financeValidations.financeInfo.validate(args.input);
       if (error) throw new UserInputError(error.message);
+
+      const { input: { value, type, description } } = args;
+      const newFinance = new Finance(value, type, user, description);
+
+      return getCustomRepository(FinanceRepository).save(newFinance);
     },
   },
 };

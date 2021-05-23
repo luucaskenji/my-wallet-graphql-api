@@ -3,6 +3,7 @@ import {
   BeforeUpdate,
   CreateDateColumn,
   Entity,
+  JoinColumn,
   ManyToOne,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
@@ -22,6 +23,7 @@ class Session {
   updatedAt: Date;
 
   @ManyToOne(() => User)
+  @JoinColumn()
   user: User;
 
   @BeforeInsert()
