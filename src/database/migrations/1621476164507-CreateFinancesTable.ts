@@ -26,6 +26,10 @@ export class CreateFinancesTable1621476164507 implements MigrationInterface {
           type: 'varchar',
         },
         {
+          name: 'description',
+          type: 'varchar',
+        },
+        {
           name: 'userId',
           type: 'int',
         },
