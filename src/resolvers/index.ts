@@ -1,7 +1,7 @@
 import { getCustomRepository } from 'typeorm';
 import jwt from 'jsonwebtoken';
 
-import { UserInputError } from 'apollo-server-express';
+import { AuthenticationError, ExpressContext, UserInputError } from 'apollo-server-express';
 import { NotFoundError } from '@/errors';
 
 import { User } from '@/models';
@@ -9,7 +9,18 @@ import { SessionRepository, UserRepository } from '../repositories';
 import { createFinanceArgs, createSessionArgs, createUserArgs } from '../types/resolvers';
 import { userValidations, financeValidations } from '../validations';
 
-const checkAuth = () => {};
+const checkAuth = (ctx: ExpressContext): void => {
+  const { req: { headers: { authorization } } } = ctx;
+
+  if (!authorization) throw new AuthenticationError('invalid request headers');
+
+  const requestToken = authorization.split(' ')[1];
+  if (!authorization || !requestToken) throw new AuthenticationError('invalid request headers');
+
+  jwt.verify(requestToken, process.env.JWT_SECRET, (err) => {
+    if (err) throw new AuthenticationError('invalid token');
+  });
+};
 
 export default {
   Mutation: {
@@ -47,8 +58,10 @@ export default {
     async createFinance(
       _: any,
       args: { input: createFinanceArgs },
-      context,
+      context: ExpressContext,
     ): Promise<any> { // to do: cast promise return
+      checkAuth(context);
+
       const { error } = financeValidations.financeInfo.validate(args.input);
       if (error) throw new UserInputError(error.message);
     },

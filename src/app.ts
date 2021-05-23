@@ -15,8 +15,9 @@ app.use(cors());
 
 const server = new ApolloServer({
   typeDefs: importSchema('./src/schema/schema.graphql'),
-  context: ({ req }) => req,
+  context: (ctx) => ctx,
   resolvers,
+  debug: false, // disables error stacktrace in response. formatError can also be used
 });
 
 server.applyMiddleware({ app });
