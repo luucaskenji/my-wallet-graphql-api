@@ -277,6 +277,51 @@ describe('resolvers', () => {
 
         expect(result).toEqual(expected);
       });
+
+      describe('joi validation', () => {
+        it('does not throw error even if input `description` is not sent', async () => {
+          const args: { input: createFinanceArgs } = {
+            input: {
+              value: '12,45',
+              type: 'INCOME',
+            },
+          };
+
+          const FinanceRepositoryMock = { save: jest.fn() };
+
+          jest.spyOn(AuthHelper, 'checkAuthAndReturnUser').mockResolvedValueOnce(defaultUserModel);
+          mocked(getCustomRepository).mockReturnValueOnce(FinanceRepositoryMock);
+
+          await Mutation.createFinance(null, args, null);
+
+          expect(FinanceRepositoryMock.save).toHaveBeenCalled();
+        });
+
+        it('throws error if input `value` does not follow the correct pattern', () => {
+          const args: { input: createFinanceArgs } = {
+            input: {
+              value: '12.45', // dot instead of comma
+              type: 'INCOME',
+              description: 'test',
+            },
+          };
+
+          expect(async () => Mutation.createFinance(null, args, null)).rejects.toThrow();
+        });
+
+        it('throws error if input `type` is not equal to INCOME or EXPENSE', () => {
+          const args: { input: createFinanceArgs } = {
+            input: {
+              value: '12,45',
+              // @ts-ignore
+              type: 'Something else',
+              description: 'test',
+            },
+          };
+
+          expect(async () => Mutation.createFinance(null, args, null)).rejects.toThrow();
+        });
+      });
     });
   });
 });
