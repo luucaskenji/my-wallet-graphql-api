@@ -1,7 +1,7 @@
 import { getCustomRepository } from 'typeorm';
 import { mocked } from 'ts-jest/utils';
 import jwt from 'jsonwebtoken';
-import { UserInputError } from 'apollo-server-express';
+import { ExpressContext, UserInputError } from 'apollo-server-express';
 
 import resolvers from '@/resolvers';
 import { createFinanceArgs, createSessionArgs, createUserArgs } from '@/types/resolvers';
@@ -321,6 +321,28 @@ describe('resolvers', () => {
 
           expect(async () => Mutation.createFinance(null, args, null)).rejects.toThrow();
         });
+      });
+    });
+
+    describe('deleteSession', () => {
+      it('returns true if session is deleted', async () => {
+        const context = {
+          req: {
+            headers: {
+              authorization: 'Bearer token',
+            },
+          },
+        } as ExpressContext;
+
+        const SessionRepositoryMock = { delete: jest.fn() };
+
+        jest.spyOn(AuthHelper, 'checkAuthAndReturnUser').mockResolvedValueOnce(defaultUserModel);
+        mocked(getCustomRepository).mockReturnValueOnce(SessionRepositoryMock);
+
+        const result = await Mutation.deleteSession(null, null, context);
+
+        expect(result).toBe(true);
+        expect(SessionRepositoryMock.delete).toHaveBeenCalledWith({ user: defaultUserModel });
       });
     });
   });
