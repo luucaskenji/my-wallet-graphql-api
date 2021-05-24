@@ -1,6 +1,6 @@
 import { mocked } from 'ts-jest/utils';
 import { getCustomRepository } from 'typeorm';
-import { ExpressContext } from 'apollo-server-express';
+import { AuthenticationError, ExpressContext } from 'apollo-server-express';
 
 import { checkAuthAndReturnUser } from '@/helpers/authHelper';
 import { defaultUserModel } from './mockedEntities';
@@ -52,7 +52,7 @@ describe('helpers', () => {
         },
       } as ExpressContext;
 
-      expect(async () => checkAuthAndReturnUser(context)).rejects.toThrow();
+      expect(async () => checkAuthAndReturnUser(context)).rejects.toThrow(AuthenticationError);
     });
 
     it('throws error if authorization token is not correctly sent', () => {
@@ -64,7 +64,22 @@ describe('helpers', () => {
         },
       } as ExpressContext;
 
-      expect(async () => checkAuthAndReturnUser(context)).rejects.toThrow();
+      expect(async () => checkAuthAndReturnUser(context)).rejects.toThrow(AuthenticationError);
+    });
+
+    it('throws error if no session is found for the user', async () => {
+      const context = {
+        req: {
+          headers: {
+            authorization: 'Bearer validToken',
+          },
+        },
+      } as ExpressContext;
+
+      const SessionRepositoryMock = { findOne: jest.fn(() => null) };
+      mocked(getCustomRepository).mockReturnValueOnce(SessionRepositoryMock);
+
+      expect(async () => checkAuthAndReturnUser(context)).rejects.toThrow(AuthenticationError);
     });
   });
 });
