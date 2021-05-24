@@ -46,6 +46,12 @@ export default {
 
       return { user, token };
     },
+    async deleteSession(_: any, args: any, context: ExpressContext): Promise<boolean> {
+      const user = await checkAuthAndReturnUser(context);
+      await getCustomRepository(SessionRepository).delete({ user });
+
+      return true;
+    },
     async createFinance(
       _: any,
       args: { input: createFinanceArgs },

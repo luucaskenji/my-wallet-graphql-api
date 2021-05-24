@@ -24,5 +24,7 @@ export const checkAuthAndReturnUser = async (ctx: ExpressContext): Promise<User>
     loadRelationIds: true,
   });
 
+  if (!session) throw new AuthenticationError('session not found');
+
   return session.user;
 };

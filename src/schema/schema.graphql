@@ -6,6 +6,7 @@ type Mutation {
   createUser(input: UserInput): User!
   createSession(input: SignInInput): Session!
   createFinance(input: FinanceInput): Finance!
+  deleteSession: Boolean!
 }
 
 type User {
