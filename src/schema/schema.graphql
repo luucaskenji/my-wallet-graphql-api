@@ -1,5 +1,5 @@
 type Query {
-  test: User
+  getFinances: [Finance!]!
 }
 
 type Mutation {

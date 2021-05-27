@@ -14,6 +14,13 @@ import { createFinanceArgs, createSessionArgs, createUserArgs } from '../types/r
 import { userValidations, financeValidations } from '../validations';
 
 export default {
+  Query: {
+    async getFinances(_: any, args: any, context: ExpressContext) {
+      const user = await checkAuthAndReturnUser(context);
+
+      return getCustomRepository(FinanceRepository).find({ where: { user } });
+    },
+  },
   Mutation: {
     createUser(_: any, args: { input: createUserArgs }): Promise<User | void> {
       const { error } = userValidations.signUp.validate(args.input);
